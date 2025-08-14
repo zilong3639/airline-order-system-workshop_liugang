@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Order } from '../../shared/models/order.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -12,11 +13,15 @@ export class OrderService {
   constructor(private http: HttpClient) {}
 
   getOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(this.apiUrl);
+    return this.http.get<{data: Order[]}>(this.apiUrl).pipe(
+      map(response => response.data)
+    );
   }
 
   getOrderById(id: string): Observable<Order> {
-    return this.http.get<Order>(`${this.apiUrl}/${id}`);
+    return this.http.get<{data: Order}>(`${this.apiUrl}/${id}`).pipe(
+      map(response => response.data)
+    );
   }
   pay(id: string): Observable<Order> {
     return this.http.post<Order>(`${this.apiUrl}/${id}/pay`, {});
